@@ -1,0 +1,110 @@
+--Hero
+if GetObjectName(myHero) ~= "Kayle" then return end
+
+--Load Libs
+require('MixLib')
+require('ChallengerCommon')
+
+--Main Menu
+KMenu = Menu("K", "Kayle")
+
+--Combo Menu
+KMenu:SubMenu("c", "Combo")
+KMenu.c:Boolean("Q", "Use Q", true)
+KMenu.c:Boolean("W", "Use W", true)
+KMenu.c:Slider("Wmana", "Min. Mana(%) To Heal",60,0,100,1)
+KMenu.c:Slider("WHP", "Use W if %HP <", 90, 1, 100, 1)
+KMenu.c:DropDown("Wmode", "W Mode", 1, {"Heal", "Chase"})
+KMenu.c:Boolean("E", "Use E", true)
+
+--Ultimate Menu
+KMenu:SubMenu("u", "Ultimate")
+KMenu.u:Boolean("R", "Use R", true)
+KMenu.u:Slider("RHP", "Use R if %HP <", 25, 1, 100, 1)
+KMenu.u:DropDown("RMode", "R Mode", 1, {"1v9", "Teamplayer"})
+
+--Harass Menu
+KMenu:SubMenu("h", "Harass")
+KMenu.h:Boolean("Q", "Use Q", true)
+KMenu.h:Boolean("E", "Use E")
+
+--KS
+KMenu:SubMenu("ks", "Kill Steal")
+KMenu.ks:Boolean("Q", "Use Q", true)
+KMenu.ks:Boolean("I", "Use Ignite", true)
+
+--Draw Menu
+KMenu:SubMenu("dr", "Draw")
+KMenu.dr:Boolean("DrRanQ", "Draw Q Range", true)
+KMenu.dr:Boolean("DrRanW", "Draw E Range", true)
+KMenu.dr:Boolean("DrRanR", "Draw W and R Range")
+
+
+--Locals
+local RangeQ = 650
+local RangeW = 900
+local RangeE = 550
+local RangeR = 900
+local Ignite = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(GetMyHero(),SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil))
+
+--Start
+OnTick(function(myHero)
+	if not IsDead(myHero) then
+		--Locals
+		local target = GetCurrentTarget()
+		--Functions
+		OnCombo(target)
+		OnHarass(target)
+		OnClear()
+		OnKillSteal()
+		CastR()
+		skin()
+		UpdateDmgHPBar()
+	end
+end)
+
+OnDraw(function(myHero)
+    --Locals
+	local qRdy = Ready(0)
+	local wRdy = Ready(1)
+	local eRdy = Ready(2)
+	local rRdy = Ready(3)
+
+--Range
+	if KMenu.dr.DrRanQ:Value() then DrawCircle(myHero, RangeQ, 1, 25, GoS.Green) end
+	if KMenu.dr.DrRanE:Value() then DrawCircle(myHero, RangeW, 1, 25, GoS.Yellow) end
+	if KMenu.dr.DrRanR:Value() then DrawCircle(myHero, RangeR, 1, 25, GoS.Red) end
+  
+
+--Functions
+function OnCombo(target)
+	--Locals
+	local qRdy = Ready(0)
+	local wRdy = Ready(1)
+	local eRdy = Ready(2)
+	local rRdy = Ready(3)
+  
+--Main
+	if Mix:Mode() == "Combo" then
+  
+		--Q
+		  if KMenu.c.Q:Value() and qRdy and Valid Target(target, RangeQ) then
+      CastSpell(_Q)
+    end
+		
+    --E
+      if KMenu.c.E:Value() and eRdy and Valid Target(target, RangeE) then
+      CastSpell(_E)
+    end
+     
+		--W
+		 if KMenu.c.E:Value() and eRdy and Valid Target(target, RangeE) then
+			local WPred = GetConicAOEPrediction(target, ChoW)
+			if WPred and WPred.hitChance >= (ChoMenu.p.Wh:Value()/100) then
+				CastSkillShot(1, WPred.castPos)
+
+    --R
+     if KMenu.c.R:Value() and rRdy and Valid Target(target, RangeE) then
+  
+  
+
