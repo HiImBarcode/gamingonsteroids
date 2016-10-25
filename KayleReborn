@@ -43,7 +43,6 @@ KMenu.dr:Boolean("DrRanR", "Draw W and R Range")
 --Locals
 local RangeQ = 650
 local RangeW = 900
-local RangeE = 550
 local RangeR = 900
 local Ignite = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(GetMyHero(),SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil))
 
@@ -93,18 +92,34 @@ function OnCombo(target)
     end
 		
     --E
-      if KMenu.c.E:Value() and eRdy and Valid Target(target, RangeE) then
-      CastSpell(_E)
+      if IsReady(_W) and KMenu.c.W:Value() and wRdy and ValidTarget(target,900) and (GetPercentMP(myHero) >= KMenu.c.WMana:Value()) then
+			if KMenu.c.WMode:Value() == 1 and (GetPercentHP(myHero) <= KMenu.c.WHP:Value()) then
+				CastTargetSpell(myHero, _W)
+			elseif KMenu.c.WMode:Value() == 2 and GetDistance(target, myHero) >= 625 then
+				CastTargetSpell(myHero, _W)
+			end
     end
      
-		--W
-		 if KMenu.c.E:Value() and eRdy and Valid Target(target, RangeE) then
-			local WPred = GetConicAOEPrediction(target, ChoW)
-			if WPred and WPred.hitChance >= (ChoMenu.p.Wh:Value()/100) then
-				CastSkillShot(1, WPred.castPos)
+	if KMenu.c.E:Value() and eRdy and Valid Target(target, RangeE) then
+	local WPred = GetConicAOEPrediction(target, ChoW)
+	if WPred and WPred.hitChance >= (ChoMenu.p.Wh:Value()/100) then
+		CastSkillShot(1, WPred.castPos)
 
-    --R
-     if KMenu.c.R:Value() and rRdy and Valid Target(target, RangeE) then
-  
+----R
+	if IsReady(_R) and KMenu.u.R:Value() then 
+			
+			for _, ally in pairs(GetAllyHeroes()) do			
+				if KMenu.u.RMode:Value() == 1 and (GetPercentHP(myHero) <= KMenu.c.RHP:Value()) then
+					CastTargetSpell(myHero, _R)
+				elseif KMenu.u.RMode:Value() == 2 then
+				if not IsDead(ally) and GetPercentHP(ally) <= KMenu.u.RHP:Value() and not IsDead(ally) then
+					if GetDistance(ally) <= 900 then
+						CastTargetSpell(ally, _R)	
+					end	
+				end	
+			end
+		end
+	end
+
   
 
