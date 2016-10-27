@@ -43,6 +43,7 @@ KMenu.dr:Boolean("DrRanR", "Draw W and R Range")
 --Locals
 local RangeQ = 650
 local RangeW = 900
+local RangeQ = 625
 local RangeR = 900
 local Ignite = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(GetMyHero(),SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil))
 
@@ -91,7 +92,7 @@ function OnCombo(target)
       CastSpell(_Q)
     end
 		
-    --E
+    --w
       if IsReady(_W) and KMenu.c.W:Value() and wRdy and ValidTarget(target,900) and (GetPercentMP(myHero) >= KMenu.c.WMana:Value()) then
 			if KMenu.c.WMode:Value() == 1 and (GetPercentHP(myHero) <= KMenu.c.WHP:Value()) then
 				CastTargetSpell(myHero, _W)
@@ -99,11 +100,10 @@ function OnCombo(target)
 				CastTargetSpell(myHero, _W)
 			end
     end
-     
+    --E
 	if KMenu.c.E:Value() and eRdy and Valid Target(target, RangeE) then
-	local WPred = GetConicAOEPrediction(target, ChoW)
-	if WPred and WPred.hitChance >= (ChoMenu.p.Wh:Value()/100) then
-		CastSkillShot(1, WPred.castPos)
+      CastSpell(_E)
+      end
 
 ----R
 	if IsReady(_R) and KMenu.u.R:Value() then 
@@ -120,6 +120,20 @@ function OnCombo(target)
 			end
 		end
 	end
-
-  
+	
+	--Harras
+	function OnHarass(target)
+	--Locals
+	local qRdy = Ready(0)
+	local eRdy = Ready(1)
+  	--Main
+	if Mix:Mode() == "Harass" then
+		--Q
+	 if KMenu.h.Q:Value() and qRdy and Valid Target(target, 350) then
+      CastSpell(_Q)
+				end
+		--E
+		if KMenu.c.E:Value() and eRdy and Valid Target(target, RangeE) then
+      CastSpell(_E)
+      end
 
