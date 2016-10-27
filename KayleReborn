@@ -91,6 +91,8 @@ function OnCombo(target)
 		  if KMenu.c.Q:Value() and qRdy and Valid Target(target, RangeQ) then
       CastSpell(_Q)
     end
+    
+    end
 		
     --w
       if IsReady(_W) and KMenu.c.W:Value() and wRdy and ValidTarget(target,900) and (GetPercentMP(myHero) >= KMenu.c.WMana:Value()) then
@@ -104,6 +106,8 @@ function OnCombo(target)
 	if KMenu.c.E:Value() and eRdy and Valid Target(target, RangeE) then
       CastSpell(_E)
       end
+      end
+      
 
 ----R
 	if IsReady(_R) and KMenu.u.R:Value() then 
@@ -132,8 +136,10 @@ function OnCombo(target)
 	 if KMenu.h.Q:Value() and qRdy and Valid Target(target, 350) then
       CastSpell(_Q)
 				end
+				end
 		--E
 		if KMenu.c.E:Value() and eRdy and Valid Target(target, RangeE) then
       CastSpell(_E)
+      end
       end
 
